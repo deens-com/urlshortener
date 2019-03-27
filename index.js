@@ -6,7 +6,7 @@
 const fetch = require("node-fetch")
 
 // Bind this in Zapier
-const inputData = { text : "Top destinations by Tripadvisor https://deens.com/earn-money" }
+const inputData = { text : "Plan your next dream trip with deens https://deens.com/trips/create" }
 
 /*********************************************************************************/
  /*** END *** Don't copy these lines to Zapier, they are used for local testing ***/
@@ -16,6 +16,12 @@ const inputData = { text : "Top destinations by Tripadvisor https://deens.com/ea
 
 // Domain you are using for your URL shortener
 const domain = "https://dee.sn/"
+
+// URl's you don't want shortened in regex format
+const doNotShorten = [
+  /^https:\/\/deens.com\/?$/i,
+  /^https:\/\/dee.sn\/?$/i
+]
 
 // The length of the path of your shortened links
 const shortIdLength = 5
@@ -46,6 +52,8 @@ async function shortenUrls(text) {
   if(!urls) return []
 
   const promises = urls.map(async (url) => {
+
+    if(doNotShorten.some(rx => rx.test(url))) return false
     
     let options = await parseUrl(url)
     options.longUrl = url
